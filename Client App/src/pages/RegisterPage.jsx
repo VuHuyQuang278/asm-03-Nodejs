@@ -140,6 +140,7 @@ const RegisterPage = () => {
               onBlur={nameBlurHandler}
               value={enteredName}
               placeholder="Full Name"
+              name="fullName"
               className="border px-4 py-4 focus:outline-none"
             />
             {nameInputHasError && (
@@ -151,6 +152,7 @@ const RegisterPage = () => {
               onBlur={emailBlurHandler}
               value={enteredEmail}
               placeholder="Email"
+              name="email"
               className="border px-4 py-4 focus:outline-none"
             />
             {emailInputHasError && (
@@ -164,6 +166,7 @@ const RegisterPage = () => {
               onBlur={passwordBlurHandler}
               value={enteredPassword}
               placeholder="Password"
+              name="password"
               className="border px-4 py-4 focus:outline-none"
             />
             {passwordInputHasError && (
@@ -177,6 +180,7 @@ const RegisterPage = () => {
               onBlur={phonedBlurHandler}
               value={enteredPhone}
               placeholder="Phone"
+              name="phone"
               className="border px-4 py-4 focus:outline-none"
             />
             {phoneInputHasError && (
