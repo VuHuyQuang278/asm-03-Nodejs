@@ -4,13 +4,11 @@ import useInput from "../hooks/use-input";
 import { saveToStorage, getFromStorage } from "../storage";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store";
+import { request } from "../api/request";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Lấy dữ liệu từ localStorage
-  const userArr = getFromStorage("userArr") ?? [];
 
   // Xử lý dữ liệu input bằng custom hook useInput
   const {
@@ -39,7 +37,7 @@ const LoginPage = () => {
   }
 
   // Xử lý sự kiện submit form
-  const formSubmissionHandler = (event) => {
+  const formSubmissionHandler = async (event) => {
     event.preventDefault();
 
     // Kiểm tra tính hợp lệ của các trường input
@@ -51,34 +49,48 @@ const LoginPage = () => {
       return;
     }
 
-    // Tìm kiếm thông tin user trong localStorage
-    for (let i = 0; i < userArr.length; i++) {
-      if (
-        enteredEmail === userArr[i].email &&
-        enteredPassword === userArr[i].password
-      ) {
-        // Nếu thoả mãn điều kiện thì đăng nhập
-        userArr[i].isLogin = true;
-        // lưu dữ liệu vào localStorage
-        saveToStorage("userArr", userArr);
+    try {
+      const res = await fetch(request + "auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: enteredEmail,
+          password: enteredPassword,
+        }),
+        mode: "cors",
+      });
 
-        // Gửi hành động đến redux store
-        dispatch(authActions.ON_LOGIN());
-
-        // Xoá dữ liệu các trường input
-        resetEmailInput();
-        resetPasswordInput();
-
-        // Thông báo đăng nhập thành công
-        alert("Logged in successfully!");
-
-        // Chuyển về trang chủ
-        navigate("/");
-      } else {
-        // Không thoả mãn điều kiện sẽ thông báo lỗi
-        alert("E-mail or password is incorrect!");
-        resetPasswordInput();
+      if (res.status === 422) {
+        throw new Error("Validation failed.");
       }
+      if (res.status !== 200 && res.status !== 201) {
+        console.log("Error!");
+        throw new Error("Could not authenticate you!");
+      }
+
+      const data = await res.json();
+      console.log(data);
+
+      // lưu dữ liệu vào localStorage
+      saveToStorage("isLogin", true);
+      saveToStorage("token", data.token);
+      // Gửi hành động đến redux store
+      dispatch(authActions.ON_LOGIN(data));
+
+      // Xoá dữ liệu các trường input
+      resetEmailInput();
+      resetPasswordInput();
+
+      // Thông báo đăng nhập thành công
+      alert("Logged in successfully!");
+
+      // Chuyển về trang chủ
+      navigate("/");
+    } catch (error) {
+      console.log(error.message);
+      // Không thoả mãn điều kiện sẽ thông báo lỗi
+      alert("E-mail or password is incorrect!");
+      resetPasswordInput();
     }
   };
 

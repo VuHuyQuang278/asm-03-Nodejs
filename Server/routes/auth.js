@@ -22,7 +22,6 @@ router.put(
       .normalizeEmail(),
     body("password").trim().isLength({ min: 5 }),
     body("fullName").trim().not().isEmpty(),
-    body("phone").trim().isEmpty().withMessage("Invalid phone number!"),
   ],
   authController.signup
 );

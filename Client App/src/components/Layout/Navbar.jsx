@@ -11,6 +11,7 @@ function Navbar() {
 
   // Lấy state từ reduc store
   const isLogin = useSelector((state) => state.auth.isLogin);
+  const user = useSelector((state) => state.auth.user);
   const listCart = useSelector((state) => state.cart.listCart);
 
   // Tính số lượng sản phẩm trong giỏ hàng
@@ -20,56 +21,25 @@ function Navbar() {
 
   const dispatch = useDispatch();
 
-  // Lấy dữ liệu từ localStorage
-  const userArr = getFromStorage("userArr") ?? [];
-
-  // Hàm hiển thị user name
-  const displayUserName = (fullName) => {
-    const arrName = fullName.split(" ");
-
-    // Lấy chữ cái đầu của tên
-    const nameUser = arrName[arrName.length - 1];
-
-    // Lấy chữ cái đầu của các phần còn lại của họ tên và nối lại
-    const sureNameUser = arrName
-      .slice(0, arrName.length - 1)
-      .map((t) => t.charAt(0))
-      .join("");
-
-    // Kết hợp chữ cái đầu của tên và phần còn lại của họ tên
-    const userName = nameUser + sureNameUser;
-
-    return userName;
-  };
-
   // Kiểm tra người dùng đã đăng nhập chưa
   useEffect(() => {
     if (isLogin) {
-      for (let i = 0; i < userArr.length; i++) {
-        if (userArr[i].isLogin === true) {
-          // Nếu người dùng đã đăng nhập thì set state là tên người dùng
-          const user = displayUserName(userArr[i].fullName);
-          setUserName(user);
-        }
-      }
+      // Nếu người dùng đã đăng nhập thì set state là tên người dùng
+      setUserName(user.userName);
     }
-  }, [isLogin, userArr]);
+  }, [isLogin]);
 
   // Hàm đăng xuất
   const loguotHandler = () => {
     if (confirm("Do you want to log out?")) {
       // Cập nhật dữ liệu người dùng tại localStorage
-      for (let i = 0; i < userArr.length; i++) {
-        if (userArr[i].isLogin === true) {
-          userArr[i].isLogin = false;
-          saveToStorage("userArr", userArr);
-        }
-      }
+      saveToStorage("isLogin", false);
+      localStorage.removeItem("token");
       // Gửi hành động đến redux store
       dispatch(authActions.ON_LOGOUT());
 
       // Xoá dữ liệu giỏ hàng của người dùng
-      localStorage.removeItem("cart");
+      // localStorage.removeItem("cart");
     }
   };
 

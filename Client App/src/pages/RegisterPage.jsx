@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import useInput from "../hooks/use-input";
 import { saveToStorage, getFromStorage } from "../storage";
+import { request } from "../api/request";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const RegisterPage = () => {
     valueChangeHandler: passwordChangedHandler,
     inputBlurHandler: passwordBlurHandler,
     reset: resetPasswordInput,
-  } = useInput((value) => value.length > 8);
+  } = useInput((value) => value.length > 5);
 
   const regex = /^[0-9]{10}$/;
 
@@ -61,7 +62,7 @@ const RegisterPage = () => {
   }
 
   // Xử lý sự kiện submit form
-  const formSubmissionHandler = (event) => {
+  const formSubmissionHandler = async (event) => {
     event.preventDefault();
 
     // Kiểm tra tính hợp lệ của các trường input
@@ -81,43 +82,47 @@ const RegisterPage = () => {
       return;
     }
 
-    // Kiểm tra email có trùng với tài khoản đã có hay không
-    for (let i = 0; i < userArr.length; i++) {
-      if (enteredEmail === userArr[i].email) {
-        alert("The Email was registered!");
-        resetEmailInput();
-        resetPasswordInput();
-        return;
+    try {
+      const response = await fetch(request + "auth/signup", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: enteredName,
+          email: enteredEmail,
+          password: enteredPassword,
+          phone: enteredPhone,
+        }),
+        mode: "cors",
+      });
+
+      if (response.status === 422) {
+        throw new Error(
+          "Validation failed. Make sure the email address isn't used yet!",
+        );
       }
+
+      if (response.status !== 200 && response.status !== 201) {
+        console.log("Error!");
+        throw new Error("Creating a user failed!");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      // Reset các trường input
+      resetNameInput();
+      resetEmailInput();
+      resetPasswordInput();
+      resetPhoneInput();
+
+      // Thông báo đăng ký tài khoản thành công
+      alert(data.message);
+
+      // Chuyển hướng về LoginPage
+      navigate("/login");
+    } catch (error) {
+      console.log(error.message);
     }
-
-    // Khởi tạo thông tin user
-    const userInfor = {
-      fullName: enteredName,
-      email: enteredEmail,
-      password: enteredPassword,
-      phone: enteredPhone,
-      isLogin: false,
-      listCart: [],
-    };
-
-    // Thêm user vào mảng
-    userArr.push(userInfor);
-
-    // Lưu vào localStorage
-    saveToStorage("userArr", userArr);
-
-    // Reset các trường input
-    resetNameInput();
-    resetEmailInput();
-    resetPasswordInput();
-    resetPhoneInput();
-
-    // Thông báo đăng ký tài khoản thành công
-    alert("Successful account registration");
-
-    // Chuyển hướng về LoginPage
-    navigate("/login");
   };
 
   return (
@@ -171,7 +176,7 @@ const RegisterPage = () => {
             />
             {passwordInputHasError && (
               <p className="ml-4 py-2 text-red-600">
-                Password must be more than 8 characters.
+                Password must be more than 5 characters.
               </p>
             )}
             <input

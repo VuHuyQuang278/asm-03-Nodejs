@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator/lib");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -49,6 +49,7 @@ exports.signup = async (req, res, next) => {
       fullName,
       phone,
       email,
+      role: "client",
     });
 
     // Lưu user xuống database
@@ -98,10 +99,10 @@ exports.login = async (req, res, next) => {
       "somesupersecret",
       { expiresIn: "1h" }
     );
-    res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+    res.status(200).json({ token: token, user: loadedUser });
   } catch (error) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
+    if (!error.statusCode) {
+      error.statusCode = 500;
     }
     next(err);
   }

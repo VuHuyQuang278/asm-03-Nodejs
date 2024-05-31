@@ -2,31 +2,26 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getFromStorage } from "../storage";
 
 // Lấy dữ liệu từ localStorage
-const userArr = getFromStorage("userArr") ?? [];
-
-let isLogin;
-
-// Kiểm tra có người dũng đăng nhập chưa
-for (let i = 0; i < userArr.length; i++) {
-  if (userArr[i].isLogin === true) {
-    isLogin = true;
-  } else {
-    isLogin = false;
-  }
-}
+let isLogin = getFromStorage("isLogin") ?? [];
 
 // Khởi tạo Redux state slice
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     isLogin,
+    user: {},
+    token: "",
   },
   reducers: {
-    ON_LOGIN(state) {
+    ON_LOGIN(state, action) {
       state.isLogin = true;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
     },
     ON_LOGOUT(state) {
       state.isLogin = false;
+      state.user = {};
+      state.token = "";
     },
   },
 });
