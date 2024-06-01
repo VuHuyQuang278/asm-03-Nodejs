@@ -6,6 +6,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth");
+const shopRoutes = require("./routes/shop");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/auth", authRoutes);
+app.use("/shop", shopRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

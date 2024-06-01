@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { productActions } from "../../../store";
 import Popup from "../../Popup";
 
+import { request } from "../../../api/request";
+
 function TopTrending() {
   // Khởi tạo state
   const [listData, setListData] = useState([]);
@@ -18,9 +20,7 @@ function TopTrending() {
   // Nạp dữ liệu
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(
-        "https://firebasestorage.googleapis.com/v0/b/funix-subtitle.appspot.com/o/Boutique_products.json?alt=media&token=dc67a5ea-e3e0-479e-9eaf-5e01bcd09c74",
-      );
+      const response = await fetch(request + "shop/top-trending");
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
@@ -43,10 +43,10 @@ function TopTrending() {
 
   return (
     <div className="mx-auto mb-16 grid w-4/5 grid-cols-4 gap-x-4 gap-y-16">
-      {listData.length > 0 &&
-        listData.map((data) => (
+      {listData.topTrendingProducts &&
+        listData.topTrendingProducts.map((data) => (
           <div
-            key={data._id.$oid}
+            key={data._id}
             className="flex cursor-pointer flex-col items-center gap-1 font-normal italic"
             onClick={() => showPopupHandler(data)}
           >

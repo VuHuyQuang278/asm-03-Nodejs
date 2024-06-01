@@ -74,6 +74,7 @@ const LoginPage = () => {
       // lưu dữ liệu vào localStorage
       saveToStorage("isLogin", true);
       saveToStorage("token", data.token);
+      saveToStorage("currentUser", data.user);
       // Gửi hành động đến redux store
       dispatch(authActions.ON_LOGIN(data));
 

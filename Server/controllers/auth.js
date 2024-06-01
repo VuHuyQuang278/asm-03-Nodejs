@@ -50,6 +50,7 @@ exports.signup = async (req, res, next) => {
       phone,
       email,
       role: "client",
+      cart: { items: [] },
     });
 
     // Lưu user xuống database
