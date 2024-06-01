@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { productActions } from "../store";
 
 const Popup = (props) => {
+  console.log(props);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Popup = (props) => {
   // Xử lý sự kiện xem chi tiết sản phẩm
   const viewDetailHandler = () => {
     // Chuyển hướng đến trang chi tiết sản phẩm
-    navigate(`/detail/${props.product._id.$oid}`);
+    navigate(`/detail/${props.product._id}`);
     // Gửi action đóng popup
     dispatch(productActions.HIDE_POPUP());
   };
@@ -31,7 +32,7 @@ const Popup = (props) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                class="h-6 w-6"
+                className="h-6 w-6"
               >
                 <path
                   fill-rule="evenodd"

@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../store";
+import { request } from "../api/request";
 
 const DetailPage = () => {
   const params = useParams();
@@ -16,40 +17,54 @@ const DetailPage = () => {
   // Nạp dữ liệu
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(
-        "https://firebasestorage.googleapis.com/v0/b/funix-subtitle.appspot.com/o/Boutique_products.json?alt=media&token=dc67a5ea-e3e0-479e-9eaf-5e01bcd09c74",
-      );
+      const response = await fetch(request + "shop/");
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
       const data = await response.json();
       setProductList(data);
+
+      console.log(productList);
+      // Tìm kiếm thông tin sản phẩm
+      const product = productList.products.find(
+        (item) => item._id === params.productId,
+      );
+      console.log(product);
+      setProductData(product);
+
+      // Tìm kiếm thông tin của các sản phẩm cùng danh mục
+      const relatedProduct = productList.products.filter(
+        (item) => item.category === product.category && item !== product,
+      );
+      setRelatedProduct(relatedProduct);
     } catch (error) {
       console.log(error.message);
     }
-  }, []);
+  }, [productList, params]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const findProduct = useCallback(() => {
-    // Tìm kiếm thông tin sản phẩm
-    const product = productList.find(
-      (item) => item._id.$oid === params.productId,
-    );
-    setProductData(product);
+  // const findProduct = useCallback(() => {
+  //   if (productList.length > 0) {
+  //     console.log("productlist", productList);
+  //     // Tìm kiếm thông tin sản phẩm
+  //     const product = productList.find((item) => item._id === params.productId);
+  //     console.log(product);
+  //     setProductData(product);
 
-    // Tìm kiếm thông tin của các sản phẩm cùng danh mục
-    const relatedProduct = productList.filter(
-      (item) => item.category === product.category && item !== product,
-    );
-    setRelatedProduct(relatedProduct);
-  }, [productList, params]);
+  //     // Tìm kiếm thông tin của các sản phẩm cùng danh mục
+  //     const relatedProduct = productList.filter(
+  //       (item) => item.category === product.category && item !== product,
+  //     );
+  //     setRelatedProduct(relatedProduct);
+  //   }
+  // }, [productList, params]);
 
-  useEffect(() => {
-    findProduct();
-  }, [findProduct]);
+  // useEffect(() => {
+  //   findProduct();
+  // }, [findProduct]);
 
   // Xử lý sự kiện thêm sản phẩm vào giỏ hàng
   const addCartHandler = (item, quantity) => {

@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.get("/top-trending", shopController.getProductsTrending);
 
+router.get("/", shopController.getProducts);
+
 module.exports = router;
