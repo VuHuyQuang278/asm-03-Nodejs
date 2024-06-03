@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { checkAuthLoader } from "./utils/auth";
 
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";

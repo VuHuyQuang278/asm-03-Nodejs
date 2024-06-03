@@ -1,12 +1,15 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../store";
 import { request } from "../api/request";
 
 const DetailPage = () => {
   const params = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const isLogin = useSelector((state) => state.auth.isLogin);
 
   // Khởi tạo state
   const [productList, setProductList] = useState([]);
@@ -24,16 +27,14 @@ const DetailPage = () => {
       const data = await response.json();
       setProductList(data);
 
-      console.log(productList);
       // Tìm kiếm thông tin sản phẩm
-      const product = productList.products.find(
+      const product = data.products.find(
         (item) => item._id === params.productId,
       );
-      console.log(product);
       setProductData(product);
 
       // Tìm kiếm thông tin của các sản phẩm cùng danh mục
-      const relatedProduct = productList.products.filter(
+      const relatedProduct = data.products.filter(
         (item) => item.category === product.category && item !== product,
       );
       setRelatedProduct(relatedProduct);
@@ -46,30 +47,16 @@ const DetailPage = () => {
     fetchData();
   }, [fetchData]);
 
-  // const findProduct = useCallback(() => {
-  //   if (productList.length > 0) {
-  //     console.log("productlist", productList);
-  //     // Tìm kiếm thông tin sản phẩm
-  //     const product = productList.find((item) => item._id === params.productId);
-  //     console.log(product);
-  //     setProductData(product);
-
-  //     // Tìm kiếm thông tin của các sản phẩm cùng danh mục
-  //     const relatedProduct = productList.filter(
-  //       (item) => item.category === product.category && item !== product,
-  //     );
-  //     setRelatedProduct(relatedProduct);
-  //   }
-  // }, [productList, params]);
-
-  // useEffect(() => {
-  //   findProduct();
-  // }, [findProduct]);
-
   // Xử lý sự kiện thêm sản phẩm vào giỏ hàng
   const addCartHandler = (item, quantity) => {
-    const itemUpdate = { ...item, quantity: quantity };
-    dispatch(cartActions.ADD_CART(itemUpdate));
+    if (isLogin) {
+      console.log(item);
+      const itemUpdate = { ...item, quantity: quantity };
+      dispatch(cartActions.ADD_CART(itemUpdate));
+    } else {
+      alert("Please login!");
+      navigate("/login");
+    }
   };
 
   // Xử lý sự kiện giảm số lượng sản phẩm
@@ -184,7 +171,7 @@ const DetailPage = () => {
             <div className="mb-16 flex items-center">
               {relatedProduct &&
                 relatedProduct.map((data) => (
-                  <Link to={`/detail/${data._id.$oid}`} key={data._id.$oid}>
+                  <Link to={`/detail/${data._id}`} key={data._id}>
                     <div className="flex w-60 flex-col items-center gap-1 font-normal italic">
                       <img
                         src={data.img1}

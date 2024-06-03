@@ -29,7 +29,7 @@ const cartSlice = createSlice({
 
       // Tìm kiếm index của sản phẩm thêm vào giỏ hàng
       const existingCartItemIndex = state.listCart.findIndex(
-        (item) => item._id.$oid === action.payload._id.$oid,
+        (item) => item._id === action.payload._id,
       );
 
       // Lấy thông tin item từ sản phảm có trong giỏ hàng
@@ -70,7 +70,7 @@ const cartSlice = createSlice({
     DELETE_CART(state, action) {
       // Tìm kiếm index của sản phẩm muốn xoá khỏi giỏ hàng
       const existingCartItemIndex = state.listCart.findIndex(
-        (item) => item._id.$oid === action.payload,
+        (item) => item._id === action.payload,
       );
 
       // Lấy sản phẩm muốn xoá từ giỏ hàng
@@ -99,7 +99,7 @@ const cartSlice = createSlice({
     REMOVE_ITEM(state, action) {
       // Tìm kiếm index của sản phẩm muốn bỏ khỏi giỏ hàng
       const existingCartItemIndex = state.listCart.findIndex(
-        (item) => item._id.$oid === action.payload,
+        (item) => item._id === action.payload,
       );
 
       // Lấy thông tin sản phẩm muốn bỏ từ giỏ hàng
@@ -138,6 +138,10 @@ const cartSlice = createSlice({
       };
 
       saveToStorage("cart", cart);
+    },
+    clearCart(state) {
+      state.listCart = [];
+      state.totalPrice = 0;
     },
   },
 });

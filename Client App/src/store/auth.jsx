@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getFromStorage } from "../storage";
 
 // Lấy dữ liệu từ localStorage
-let isLogin = getFromStorage("isLogin") ?? [];
-let currentUser = getFromStorage("currentUser") ?? [];
+let isLogin = getFromStorage("isLogin") ?? false;
+let currentUser = getFromStorage("currentUser") ?? {};
 
 // Khởi tạo Redux state slice
 const authSlice = createSlice({

@@ -53,7 +53,7 @@ const CartPage = () => {
           <tbody>
             {listCart.length > 0 &&
               listCart.map((item) => (
-                <tr key={item._id.$oid} className="text-center">
+                <tr key={item._id} className="text-center">
                   <td className="px-6 py-3 text-center">
                     <img
                       src={item.img1}

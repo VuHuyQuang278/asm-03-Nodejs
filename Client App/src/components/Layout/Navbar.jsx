@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getFromStorage, saveToStorage } from "../../storage";
+import { saveToStorage } from "../../storage";
 import { useState, useEffect } from "react";
-import { authActions } from "../../store";
+import { authActions, cartActions } from "../../store";
 
 function Navbar() {
   // Khởi tạo state
@@ -14,10 +14,15 @@ function Navbar() {
   const user = useSelector((state) => state.auth.user);
   const listCart = useSelector((state) => state.cart.listCart);
 
-  // Tính số lượng sản phẩm trong giỏ hàng
-  const totalCartItems = listCart.reduce((totalNumberOfItems, item) => {
-    return totalNumberOfItems + item.quantity;
-  }, 0);
+  let totalCartItems = 0;
+  if (isLogin) {
+    if (listCart) {
+      // Tính số lượng sản phẩm trong giỏ hàng
+      totalCartItems = listCart.reduce((totalNumberOfItems, item) => {
+        return totalNumberOfItems + item.quantity;
+      }, 0);
+    }
+  }
 
   const dispatch = useDispatch();
 
@@ -35,11 +40,13 @@ function Navbar() {
       // Cập nhật dữ liệu người dùng tại localStorage
       saveToStorage("isLogin", false);
       localStorage.removeItem("token");
+      localStorage.removeItem("currentUser");
       // Gửi hành động đến redux store
       dispatch(authActions.ON_LOGOUT());
 
       // Xoá dữ liệu giỏ hàng của người dùng
-      // localStorage.removeItem("cart");
+      localStorage.removeItem("cart");
+      dispatch(cartActions.clearCart());
     }
   };
 
