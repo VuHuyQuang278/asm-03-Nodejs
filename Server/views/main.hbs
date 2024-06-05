@@ -1,0 +1,47 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * { background-color: #212529; color: #f8f9fa; font-weight: 600; }
+      .container { width: 80%; margin: 0 auto; padding: 4rem 0; } .image {
+      object-fit: contain; width: 100px; } table, th, td { border: 1px solid; }
+      th, td { padding: 0.5rem; } .table { width: 100%; margin: 1rem auto;
+      text-align: center; } .text-1 { font-size: large; } .text { font-size:
+      x-large; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Xin Chào {{fullName}}</h1>
+      <p>Phone: {{phone}}</p>
+      <p>Address: {{address}}</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Tên Sản Phẩm</th>
+            <th>Hình Ảnh</th>
+            <th>Giá</th>
+            <th>Số Lượng</th>
+            <th>Thành Tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each listCart}}
+            <tr>
+              <td class="text-1">{{this.name}}</td>
+              <td><img src={{this.img}} alt="test" class="image" /></td>
+              <td class="text-1">{{this.price}}</td>
+              <td class="text-1">{{this.quantity}}</td>
+              <td class="text-1">{{this.totalPrice}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <h2>Tổng Thanh Toán:</h2>
+      <p class="text">{{totalPrice}}</p>
+      <p class="text">Cảm ơn bạn !</p>
+    </div>
+  </body>
+</html>

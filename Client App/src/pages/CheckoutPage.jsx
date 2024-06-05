@@ -37,17 +37,19 @@ const CheckoutPage = () => {
   const formSubmitHandle = async (event) => {
     event.preventDefault();
 
-    let newCart = listCart.map((product) => {
-      return {
-        productId: product._id,
-        quantity: product.quantity,
-      };
-    });
+    if (listCart.length === 0) {
+      alert("The shopping cart cannot be empty");
+      return;
+    }
 
     const body = {
-      listCart: newCart,
+      listCart: listCart,
       totalPrice,
       userId: user._id,
+      fullName: enteredFullName,
+      email: enteredEmail,
+      phone: enteredPhoneNumber,
+      address: address,
     };
 
     try {
