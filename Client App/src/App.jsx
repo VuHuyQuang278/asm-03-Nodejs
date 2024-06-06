@@ -9,6 +9,8 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import RootLayout from "./pages/RootLayout";
+import Order from "./pages/Order";
+import DetailOrder from "./pages/DetailOrder";
 
 // Tạo router
 const router = createBrowserRouter([
@@ -23,6 +25,13 @@ const router = createBrowserRouter([
       { path: "checkout", element: <CheckoutPage /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      {
+        path: "order",
+        children: [
+          { index: true, element: <Order /> },
+          { path: "detail/:orderId", element: <DetailOrder /> },
+        ],
+      },
     ],
   },
 ]);

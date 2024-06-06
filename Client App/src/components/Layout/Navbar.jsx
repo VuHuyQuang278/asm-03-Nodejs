@@ -110,6 +110,9 @@ function Navbar() {
                       </svg>
                     </div>
                   </div>
+                  <Link to="/order" className="font-semibold">
+                    My Orders
+                  </Link>
                   <button className="italic" onClick={loguotHandler}>
                     (Logout)
                   </button>

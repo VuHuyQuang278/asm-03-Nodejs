@@ -23,6 +23,10 @@ const orderSchema = new Schema(
       required: true,
       ref: "User",
     },
+    address: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

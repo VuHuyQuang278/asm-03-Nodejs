@@ -4,6 +4,7 @@ import { getFromStorage } from "../storage";
 // Lấy dữ liệu từ localStorage
 let isLogin = getFromStorage("isLogin") ?? false;
 let currentUser = getFromStorage("currentUser") ?? {};
+let token = getFromStorage("token") ?? "";
 
 // Khởi tạo Redux state slice
 const authSlice = createSlice({
@@ -11,7 +12,7 @@ const authSlice = createSlice({
   initialState: {
     isLogin,
     user: isLogin ? currentUser : {},
-    token: "",
+    token: token,
   },
   reducers: {
     ON_LOGIN(state, action) {

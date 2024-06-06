@@ -72,7 +72,7 @@ const CartPage = () => {
                       <button
                         className="disabled:cursor-not-allowed"
                         disabled={item.quantity === 1}
-                        onClick={() => removeItemHandler(item._id.$oid)}
+                        onClick={() => removeItemHandler(item._id)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +102,7 @@ const CartPage = () => {
                   <td className="px-4 py-2">
                     <button
                       className="ml-5 flex items-center"
-                      onClick={() => deleteHandler(item._id.$oid)}
+                      onClick={() => deleteHandler(item._id)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

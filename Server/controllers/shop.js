@@ -43,6 +43,7 @@ exports.postOrder = async (req, res, next) => {
   const phone = req.body.phone;
   const address = req.body.address;
 
+  // Lấy dữ liệu cần thiết để tạo đơn hàng
   let newCart = listCart.map((product) => {
     return {
       productId: product._id,
@@ -51,14 +52,17 @@ exports.postOrder = async (req, res, next) => {
   });
 
   try {
+    // Tạo đơn hàng
     const order = new Order({
       listCart: newCart,
       totalPrice,
       userId,
+      address,
     });
 
     const result = await order.save();
 
+    // Tạo transporter để gửi mail khi tạo đơn hàng thành công
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
@@ -129,6 +133,40 @@ exports.postOrder = async (req, res, next) => {
 
     // Trả lại phản hồi cho người dùng
     res.status(201).json({ message: "Order created!" });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find().populate("userId").exec();
+
+    // Trả lại phản hồi cho người dùng
+    res.status(200).json(orders);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getDetailOrder = async (req, res, next) => {
+  // Lấy id của order cần hiển thị
+  const orderId = req.params.orderId;
+
+  try {
+    const detailOrder = await Order.findById(orderId)
+      .populate("userId")
+      .populate("listCart.productId")
+      .exec();
+
+    // Trả lại phản hồi cho người dùng
+    res.status(200).json(detailOrder);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
