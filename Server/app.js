@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth");
 const shopRoutes = require("./routes/shop");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use("/auth", authRoutes);
 app.use("/shop", shopRoutes);
+app.use("/admin", adminRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
