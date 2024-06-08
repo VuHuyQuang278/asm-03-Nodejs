@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 
 import useInput from "../hooks/use-input";
-import { saveToStorage, getFromStorage } from "../storage";
+import { saveToStorage } from "../storage";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store";
 import { request } from "../api/request";

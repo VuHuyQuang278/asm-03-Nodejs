@@ -21,7 +21,6 @@ const AdminPage = () => {
         throw new Error("Something went wrong!");
       }
       const data = await response.json();
-      console.log(data);
       setListData(data);
     } catch (error) {
       console.log(error.message);
