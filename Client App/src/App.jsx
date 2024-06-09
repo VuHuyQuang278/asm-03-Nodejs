@@ -1,5 +1,9 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { checkAuthLoader } from "./utils/auth";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import { checkIsAuth } from "./utils/auth";
 
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
@@ -21,15 +25,43 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "shop", element: <ShopPage /> },
       { path: "detail/:productId", element: <DetailPage /> },
-      { path: "cart", element: <CartPage /> },
-      { path: "checkout", element: <CheckoutPage /> },
+      {
+        path: "cart",
+        element: checkIsAuth() ? (
+          <CartPage />
+        ) : (
+          <Navigate to={"/login"} replace={true} />
+        ),
+      },
+      {
+        path: "checkout",
+        element: checkIsAuth() ? (
+          <CheckoutPage />
+        ) : (
+          <Navigate to={"/login"} replace={true} />
+        ),
+      },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       {
         path: "order",
         children: [
-          { index: true, element: <Order /> },
-          { path: "detail/:orderId", element: <DetailOrder /> },
+          {
+            index: true,
+            element: checkIsAuth() ? (
+              <Order />
+            ) : (
+              <Navigate to={"/login"} replace={true} />
+            ),
+          },
+          {
+            path: "detail/:orderId",
+            element: checkIsAuth() ? (
+              <DetailOrder />
+            ) : (
+              <Navigate to={"/login"} replace={true} />
+            ),
+          },
         ],
       },
     ],

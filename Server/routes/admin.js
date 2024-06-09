@@ -9,4 +9,6 @@ const router = express.Router();
 
 router.get("/", adminController.getDashboard);
 
+router.get("/product", adminController.getProducts);
+
 module.exports = router;

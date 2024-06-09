@@ -7,8 +7,8 @@ import {
   faShop,
   faTruck,
   faRightFromBracket,
+  faCubes,
 } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router-dom";
 import { authActions } from "../store/index";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ function RootLayout() {
           <h3>MAIN</h3>
           <ul className="my-3 ml-4">
             <li>
-              <Link to={""} className="flex items-center justify-start gap-3">
+              <Link to={"/"} className="flex items-center justify-start gap-3">
                 <FontAwesomeIcon icon={faBars} />
                 <p>Dashboard</p>
               </Link>
@@ -56,11 +56,11 @@ function RootLayout() {
           <ul className="my-3 ml-4">
             <li>
               <Link
-                to={""}
+                to={"/products"}
                 className="flex items-center justify-start gap-3 pb-2"
               >
-                <FontAwesomeIcon icon={faUser} />
-                <p>Users</p>
+                <FontAwesomeIcon icon={faCubes} />
+                <p>Products</p>
               </Link>
             </li>
             <li>
