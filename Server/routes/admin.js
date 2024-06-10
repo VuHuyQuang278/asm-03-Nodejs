@@ -11,4 +11,6 @@ router.get("/", adminController.getDashboard);
 
 router.get("/product", adminController.getProducts);
 
+router.get("/order-detail/:orderId", adminController.getDetailOrder);
+
 module.exports = router;

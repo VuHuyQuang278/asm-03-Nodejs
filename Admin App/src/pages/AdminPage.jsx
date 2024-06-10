@@ -8,6 +8,7 @@ import {
 
 import { useState, useCallback, useEffect } from "react";
 import { request } from "../api/request";
+import { Link } from "react-router-dom";
 
 const AdminPage = () => {
   // Khởi tạo state
@@ -134,9 +135,12 @@ const AdminPage = () => {
                     <td className="px-6 py-4">Chưa vận chuyển</td>
                     <td className="px-6 py-4">Chưa thanh toán</td>
                     <td className="px-6 py-4">
-                      <button className="border-2 bg-green-600 px-3 py-2 font-medium text-gray-200">
+                      <Link
+                        to={`/order/${order._id}`}
+                        className="border-2 bg-green-600 px-3 py-2 font-medium text-gray-200"
+                      >
                         View
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

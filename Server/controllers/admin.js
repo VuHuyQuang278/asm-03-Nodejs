@@ -40,3 +40,23 @@ exports.getProducts = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getDetailOrder = async (req, res, next) => {
+  // Lấy id của order cần hiển thị
+  const orderId = req.params.orderId;
+
+  try {
+    const detailOrder = await Order.findById(orderId)
+      .populate("userId")
+      .populate("listCart.productId")
+      .exec();
+
+    // Trả lại phản hồi cho người dùng
+    res.status(200).json(detailOrder);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
