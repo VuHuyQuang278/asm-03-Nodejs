@@ -3,11 +3,10 @@ import { Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
-  faHotel,
-  faShop,
-  faTruck,
   faRightFromBracket,
   faCubes,
+  faHeadset,
+  faCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { authActions } from "../store/index";
@@ -68,26 +67,8 @@ function RootLayout() {
                 to={""}
                 className="flex items-center justify-start gap-3 pb-2"
               >
-                <FontAwesomeIcon icon={faHotel} />
-                <p>Hotels</p>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={""}
-                className="flex items-center justify-start gap-3 pb-2"
-              >
-                <FontAwesomeIcon icon={faShop} />
-                <p>Rooms</p>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={"/transaction"}
-                className="flex items-center justify-start gap-3 pb-2"
-              >
-                <FontAwesomeIcon icon={faTruck} />
-                <p>Transactions</p>
+                <FontAwesomeIcon icon={faHeadset} />
+                <p>Live Chat</p>
               </Link>
             </li>
           </ul>
@@ -97,20 +78,11 @@ function RootLayout() {
           <ul className="my-3 ml-4">
             <li>
               <Link
-                to={""}
+                to={"/products/add-product"}
                 className="flex items-center justify-start gap-3 pb-2"
               >
-                <FontAwesomeIcon icon={faHotel} />
-                <p>New Hotel</p>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={""}
-                className="flex items-center justify-start gap-3 pb-2"
-              >
-                <FontAwesomeIcon icon={faShop} />
-                <p>New Room</p>
+                <FontAwesomeIcon icon={faCirclePlus} />
+                <p>New Product</p>
               </Link>
             </li>
           </ul>

@@ -13,4 +13,8 @@ router.get("/product", adminController.getProducts);
 
 router.get("/order-detail/:orderId", adminController.getDetailOrder);
 
+router.post("/product", adminController.createProduct);
+
+router.put("/product/edit/:productId");
+
 module.exports = router;

@@ -139,7 +139,7 @@ const ProductPage = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-start gap-3">
                         <Link
-                          to={``}
+                          to={`/products/edit-product/${product._id}`}
                           className="bg-green-400 p-2 font-medium text-slate-50"
                         >
                           Update

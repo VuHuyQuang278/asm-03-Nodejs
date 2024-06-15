@@ -5,6 +5,8 @@ import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import ProductPage from "./pages/ProductPage";
 import DetailOrder from "./pages/DetailOrder";
+import AddProductPage from "./pages/AddProductPage";
+import EditProductPage from "./pages/EditProductPage";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -14,7 +16,14 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminPage /> },
       { path: "order/:orderId", element: <DetailOrder /> },
-      { path: "products", element: <ProductPage /> },
+      {
+        path: "products",
+        children: [
+          { index: true, element: <ProductPage /> },
+          { path: "add-product", element: <AddProductPage /> },
+          { path: "edit-product/:productId", element: <EditProductPage /> },
+        ],
+      },
     ],
   },
 ]);
