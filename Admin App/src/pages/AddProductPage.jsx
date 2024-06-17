@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { request } from "../api/request";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AddProductPage = () => {
   const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState();
@@ -124,7 +126,7 @@ const AddProductPage = () => {
     try {
       const res = await fetch(request + "admin/product", {
         method: "POST",
-        // headers: { "Content-Type": "application/json" },
+        headers: { Authorization: "Bearer " + token },
         body: formData,
         mode: "cors",
       });

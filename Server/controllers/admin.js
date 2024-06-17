@@ -2,6 +2,8 @@ const User = require("../models/user");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Session = require("../models/session");
+const path = require("path");
+const fs = require("fs");
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -42,14 +44,14 @@ exports.getProducts = async (req, res, next) => {
 };
 
 exports.getDetailProduct = async (req, res, next) => {
-  // Lấy id của order cần hiển thị
+  // Lấy id của product
   const productId = req.params.productId;
 
   try {
     const detailProduct = await Product.findById(productId);
 
     // Trả lại phản hồi cho người dùng
-    res.status(200).json(detailOrder);
+    res.status(200).json(detailProduct);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -127,14 +129,67 @@ exports.createProduct = async (req, res, next) => {
 };
 
 exports.updateProducts = async (req, res, next) => {
-  const name = req.body.name;
-  const price = req.body.price;
-  const category = req.body.category;
-  const quantity = req.body.quantity;
-  const shortDesc = req.body.shortDesc;
-  const longDesc = req.body.longDesc;
+  // Lấy id của product
+  const productId = req.params.productId;
+
+  const updateName = req.body.name;
+  const updatePrice = req.body.price;
+  const updateCategory = req.body.category;
+  const updateQuantity = req.body.quantity;
+  const updateShortDesc = req.body.shortDesc;
+  const updateLongDesc = req.body.longDesc;
 
   try {
+    const product = await Product.findByIdAndUpdate(
+      { _id: productId },
+      {
+        $set: {
+          name: updateName,
+          price: updatePrice,
+          category: updateCategory,
+          quantity: updateQuantity,
+          short_desc: updateShortDesc,
+          long_desc: updateLongDesc,
+        },
+      },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found!" });
+    }
+
+    return res.status(200).json({
+      message: "Product updated successfully!",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deleteProduct = async (req, res, next) => {
+  const productId = req.params.productId;
+
+  try {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      const error = new Error("Could not find product.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    clearImage(product.img1);
+    clearImage(product.img2);
+    clearImage(product.img3);
+    clearImage(product.img4);
+
+    await Product.findByIdAndDelete(productId);
+
+    res.status(200).json({ message: "Deleted product." });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -144,6 +199,7 @@ exports.updateProducts = async (req, res, next) => {
 };
 
 const clearImage = (filePath) => {
-  filePath = path.join(__dirname, "..", "public", filePath);
+  filePath = filePath.replace("http://localhost:5000/", "");
+  filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));
 };

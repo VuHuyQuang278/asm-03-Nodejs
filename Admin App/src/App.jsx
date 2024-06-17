@@ -6,7 +6,9 @@ import LoginPage from "./pages/LoginPage";
 import ProductPage from "./pages/ProductPage";
 import DetailOrder from "./pages/DetailOrder";
 import AddProductPage from "./pages/AddProductPage";
-import EditProductPage from "./pages/EditProductPage";
+import EditProductPage, {
+  loader as productDetailLoader,
+} from "./pages/EditProductPage";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -21,7 +23,11 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <ProductPage /> },
           { path: "add-product", element: <AddProductPage /> },
-          { path: "edit-product/:productId", element: <EditProductPage /> },
+          {
+            path: "edit-product/:productId",
+            element: <EditProductPage />,
+            loader: productDetailLoader,
+          },
         ],
       },
     ],

@@ -9,15 +9,22 @@ import {
 import { useState, useCallback, useEffect } from "react";
 import { request } from "../api/request";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AdminPage = () => {
   // Khởi tạo state
   const [listData, setListData] = useState();
 
+  const token = useSelector((state) => state.auth.token);
+
   // Nạp dữ liệu
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(request + "admin/");
+      const response = await fetch(request + "admin/", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }

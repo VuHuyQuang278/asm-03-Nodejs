@@ -1,16 +1,23 @@
 import { useState, useCallback, useEffect } from "react";
 import { request } from "../api/request";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProductPage = () => {
   // Khởi tạo state
   const [listData, setListData] = useState();
   const [enteredValue, setEnteredValue] = useState("");
 
+  const token = useSelector((state) => state.auth.token);
+
   // Nạp dữ liệu
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(request + "admin/product");
+      const response = await fetch(request + "admin/product", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
@@ -30,10 +37,33 @@ const ProductPage = () => {
     setEnteredValue(event.target.value);
   };
 
+  const deleteProductHandle = async (productId) => {
+    console.log(productId);
+    try {
+      const res = await fetch(request + "admin/product/delete/" + productId, {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+        mode: "cors",
+      });
+
+      if (!res.ok) {
+        throw new Error("Something went wrong!");
+      }
+
+      const data = await res.json();
+      console.log(data);
+
+      alert(data.message);
+      fetchData();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   const submitFormHandle = (event) => {
     event.preventDefault();
-
-    console.log(enteredValue);
 
     if (enteredValue === "") {
       fetchData();
@@ -144,12 +174,12 @@ const ProductPage = () => {
                         >
                           Update
                         </Link>
-                        <Link
-                          to={``}
+                        <button
+                          onClick={() => deleteProductHandle(product._id)}
                           className="bg-red-500 p-2 font-medium text-slate-50"
                         >
                           Delete
-                        </Link>
+                        </button>
                       </div>
                     </td>
                   </tr>
