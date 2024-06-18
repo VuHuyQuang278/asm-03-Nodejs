@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { request } from "../../../api/request";
 
 const Products = (props) => {
   // Khởi tạo state
@@ -11,13 +12,13 @@ const Products = (props) => {
   // Nạp dữ liệu
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(
-        "https://firebasestorage.googleapis.com/v0/b/funix-subtitle.appspot.com/o/Boutique_products.json?alt=media&token=dc67a5ea-e3e0-479e-9eaf-5e01bcd09c74",
-      );
+      const response = await fetch(request + "shop/");
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
-      const data = await response.json();
+      const res = await response.json();
+      const data = res.products;
+      console.log(data);
       setProductData(data);
       setFilteredProducts(data);
     } catch (error) {
@@ -60,7 +61,7 @@ const Products = (props) => {
         <div className="mb-16">
           <div className="relative mb-6 grid grid-cols-3 gap-x-4 gap-y-8">
             {filteredProduct.map((data) => (
-              <Link to={`/detail/${data._id.$oid}`} key={data._id.$oid}>
+              <Link to={`/detail/${data._id}`} key={data._id}>
                 <div
                   className="flex flex-col items-center gap-1 font-normal italic"
                   data-aos="fade-up"

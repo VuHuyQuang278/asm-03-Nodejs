@@ -12,7 +12,6 @@ const DetailPage = () => {
   const isLogin = useSelector((state) => state.auth.isLogin);
 
   // Khởi tạo state
-  const [productList, setProductList] = useState([]);
   const [productData, setProductData] = useState();
   const [relatedProduct, setRelatedProduct] = useState();
   const [productQuantity, setProductQuantity] = useState(1);
@@ -25,12 +24,13 @@ const DetailPage = () => {
         throw new Error("Something went wrong!");
       }
       const data = await response.json();
-      setProductList(data);
+      console.log(data.products);
 
       // Tìm kiếm thông tin sản phẩm
       const product = data.products.find(
         (item) => item._id === params.productId,
       );
+      console.log(product);
       setProductData(product);
 
       // Tìm kiếm thông tin của các sản phẩm cùng danh mục
@@ -41,7 +41,7 @@ const DetailPage = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [productList, params]);
+  }, [params]);
 
   useEffect(() => {
     fetchData();
@@ -117,6 +117,12 @@ const DetailPage = () => {
                   {productData.category}
                 </span>
               </p>
+              <p className="pb-4 font-medium uppercase text-slate-900">
+                Quantity in stock:{" "}
+                <span className="font-normal text-slate-400">
+                  {productData.quantity}
+                </span>
+              </p>
               <div className="flex">
                 <div className="flex w-48 border-collapse items-center justify-between border border-slate-700 px-4 py-2">
                   <p>QUANTITY</p>
@@ -135,7 +141,11 @@ const DetailPage = () => {
                       </svg>
                     </button>
                     <p className="px-1 text-lg not-italic">{productQuantity}</p>
-                    <button onClick={ascQuantityHandler}>
+                    <button
+                      onClick={ascQuantityHandler}
+                      disabled={productData.quantity === "0"}
+                      className="disabled:cursor-not-allowed"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 256 512"

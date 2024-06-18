@@ -3,6 +3,7 @@ const Order = require("../models/order");
 const nodemailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
+const product = require("../models/product");
 
 exports.getProductsTrending = async (req, res, next) => {
   try {
@@ -52,6 +53,29 @@ exports.postOrder = async (req, res, next) => {
   });
 
   try {
+    const idArr = newCart.map((item) => item.productId);
+    const products = await Product.find({ _id: { $in: idArr } });
+    // Lấy ra số lượng của sản phẩm trong kho
+    const quantities = products.map((product) => product.quantity);
+
+    // Kiểm tra số lượng sản phẩm trong kho có đủ để dặt hàng không
+    for (let i = 0; i < newCart.length; i++) {
+      if (newCart[i].quantity > quantities[i]) {
+        const error = new Error("Order created failed!");
+        error.statusCode = 500;
+        throw error;
+      }
+    }
+
+    // Cập nhật số lượng sản phẩm trong kho
+    for (let i = 0; i < newCart.length; i++) {
+      const orderItem = newCart[i];
+      await Product.updateOne(
+        { _id: orderItem.productId },
+        { $inc: { quantity: -Number(orderItem.quantity) } }
+      );
+    }
+
     // Tạo đơn hàng
     const order = new Order({
       listCart: newCart,
