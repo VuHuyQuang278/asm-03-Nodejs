@@ -8,8 +8,8 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const shopRoutes = require("./routes/shop");
 const adminRoutes = require("./routes/admin");
-
-const app = express();
+const messageRoutes = require("./routes/message");
+const { app, server } = require("./socket.js");
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -49,6 +49,7 @@ app.use(cors());
 app.use("/auth", authRoutes);
 app.use("/shop", shopRoutes);
 app.use("/admin", adminRoutes);
+app.use("/message", messageRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -63,8 +64,9 @@ mongoose
     "mongodb+srv://quangvhfx22065:bt8DJ4qigJRUzAYl@cluster0.k5j9bbf.mongodb.net/shopdb?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then((result) => {
-    console.log("connected");
-    app.listen(5000);
+    server.listen(5000, () => {
+      console.log("Server is running on port 5000");
+    });
   })
   .catch((err) => {
     console.log(err);

@@ -9,6 +9,8 @@ import AddProductPage from "./pages/AddProductPage";
 import EditProductPage, {
   loader as productDetailLoader,
 } from "./pages/EditProductPage";
+import MessageLayout from "./pages/MessageLayout";
+import MessageDetail from "./pages/MessageDetail";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -29,6 +31,11 @@ const router = createBrowserRouter([
             loader: productDetailLoader,
           },
         ],
+      },
+      {
+        path: "chat",
+        element: <MessageLayout />,
+        children: [{ path: ":receiverId", element: <MessageDetail /> }],
       },
     ],
   },

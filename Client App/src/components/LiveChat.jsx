@@ -1,10 +1,59 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { request } from "../api/request";
+import { useSelector } from "react-redux";
+import openSocket from "socket.io-client";
+
+import useGetAdmin from "../hooks/use-getAdmin";
 
 const LiveChat = () => {
   // Khởi tạo state
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [message, setMessage] = useState("");
+  const [listMessage, setListMessage] = useState([]);
+
+  const admin = useGetAdmin();
+
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch(request + "message/getmess", {
+        headers: { Authorization: "Bearer " + token },
+      });
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+      const messages = await response.json();
+      console.log(messages);
+      setListMessage(messages);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, [request]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (user) {
+      const socket = openSocket("http://localhost:5000", {
+        query: {
+          userId: user._id,
+        },
+        transports: ["websocket"],
+      });
+
+      socket?.on("newMessage", (message) => {
+        console.log(message);
+        console.log(listMessage);
+        setListMessage((msgs) => [...msgs, message]);
+      });
+    }
+  }, [user]);
 
   // Xử lý sự kiện đóng/mở live chat
   const showLiveChatHandler = () => {
@@ -14,6 +63,28 @@ const LiveChat = () => {
   useEffect(() => {
     Aos.init({ duration: 600 });
   }, []);
+
+  const sendMessageHandle = async (event) => {
+    event.preventDefault();
+    if (message === "") return;
+
+    try {
+      const response = await fetch(request + "message/send/" + admin._id, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ message }),
+        mode: "cors",
+      });
+
+      console.log(message);
+      setMessage("");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <>
@@ -35,48 +106,49 @@ const LiveChat = () => {
       {showLiveChat && (
         <div
           data-aos="zoom-in-left"
-          className="fixed bottom-28 right-36 z-10 w-1/3 rounded-lg border-2 bg-slate-50 px-8 py-6 shadow-[10px_35px_60px_-15px_rgba(0,0,0,0.3)]"
+          className="fixed bottom-28 right-36 z-10  w-1/3 rounded-lg border-2 bg-slate-50 px-8 py-6 shadow-[10px_35px_60px_-15px_rgba(0,0,0,0.3)]"
         >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-medium">Customer Support</h3>
-            <div className="bg-slate-300 px-4 py-2 italic hover:bg-slate-500">
+            <button
+              onClick={() => {
+                fetchData();
+              }}
+              className="bg-slate-300 px-4 py-2 italic hover:bg-slate-500"
+            >
               Let's Chat App
-            </div>
+            </button>
           </div>
           <hr className="mb-4 border border-slate-200" />
-          <div className="mb-4 mr-6 flex justify-end ">
-            <p className="rounded bg-teal-400 px-4 py-2 italic text-slate-100">
-              Xin chào
-            </p>
+          <div className="h-56 overflow-y-auto">
+            {listMessage.map((mess) =>
+              mess.senderId === user._id ? (
+                <div key={mess._id} className="mb-4 mr-6 flex justify-end ">
+                  <p className="rounded bg-teal-400 px-4 py-2 italic text-slate-100">
+                    {mess.message}
+                  </p>
+                </div>
+              ) : (
+                <div
+                  key={mess._id}
+                  className="mb-4 mr-6 flex items-center justify-start gap-4"
+                >
+                  <img
+                    src="src\assets\admin.png"
+                    alt="admin"
+                    className="h-9 w-9 object-contain"
+                  />
+                  <p className="rounded bg-slate-100 px-4 py-2 italic text-slate-400">
+                    ADMIN: {mess.message}
+                  </p>
+                </div>
+              ),
+            )}
           </div>
-          <div className="mb-4 mr-6 flex justify-end ">
-            <p className="rounded bg-teal-400 px-4 py-2 italic text-slate-100">
-              Làm thế nào để xem các sản phẩm
-            </p>
-          </div>
-          <div className="mb-4 mr-6 flex items-center justify-start gap-4">
-            <img
-              src="src\assets\admin.png"
-              alt="admin"
-              className="h-9 w-9 object-contain"
-            />
-            <p className="rounded bg-slate-100 px-4 py-2 italic text-slate-400">
-              ADMIN: Chào bạn
-            </p>
-          </div>
-          <div className="mb-4 mr-6 flex w-3/4 items-center justify-start gap-4">
-            <img
-              src="src\assets\admin.png"
-              alt="admin"
-              className="h-9 w-9 object-contain"
-            />
-            <p className="rounded bg-slate-100 px-4 py-2 italic text-slate-400">
-              ADMIN: Bạn có thể vào mục Shop để xem các sản phẩm
-            </p>
-          </div>
+
           <div className="block h-16"></div>
           <hr className="mb-4 border border-slate-200" />
-          <div className="flex items-center justify-between">
+          <form className="flex items-center justify-between">
             <div className="flex w-4/6 items-center gap-2">
               <img
                 src="src\assets\admin.png"
@@ -87,6 +159,8 @@ const LiveChat = () => {
                 type="text"
                 placeholder="Enter Message!"
                 className="w-10/12 px-2 py-1 focus:outline-none"
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
               />
             </div>
             <div className="flex w-2/6 items-center justify-end gap-4">
@@ -114,7 +188,7 @@ const LiveChat = () => {
                   />
                 </svg>
               </button>
-              <button>
+              <button onClick={sendMessageHandle} type="submit">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 512 512"
@@ -127,7 +201,7 @@ const LiveChat = () => {
                 </svg>
               </button>
             </div>
-          </div>
+          </form>
         </div>
       )}
     </>

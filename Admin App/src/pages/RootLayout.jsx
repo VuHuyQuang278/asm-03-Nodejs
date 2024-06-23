@@ -64,7 +64,7 @@ function RootLayout() {
             </li>
             <li>
               <Link
-                to={""}
+                to={"/chat"}
                 className="flex items-center justify-start gap-3 pb-2"
               >
                 <FontAwesomeIcon icon={faHeadset} />

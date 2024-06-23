@@ -63,7 +63,7 @@ const AdminPage = () => {
                 <h3 className="text-2xl font-medium">
                   <p className="relative">
                     {`${listData.earnings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`}
-                    <span className="absolute -right-6 -top-1 text-base">
+                    <span className="absolute -right-10 -top-1 text-base">
                       VND
                     </span>
                   </p>

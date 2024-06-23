@@ -1,9 +1,11 @@
 const Product = require("../models/product");
 const Order = require("../models/order");
+const User = require("../models/user");
 const nodemailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
 const product = require("../models/product");
+const { log } = require("console");
 
 exports.getProductsTrending = async (req, res, next) => {
   try {
@@ -191,6 +193,20 @@ exports.getDetailOrder = async (req, res, next) => {
 
     // Trả lại phản hồi cho người dùng
     res.status(200).json(detailOrder);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getAdmin = async (req, res, next) => {
+  try {
+    const users = await User.find();
+
+    const admin = users.find((user) => user.role === "admin");
+    res.status(200).json(admin);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
