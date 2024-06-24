@@ -4,12 +4,17 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 const authRoutes = require("./routes/auth");
 const shopRoutes = require("./routes/shop");
 const adminRoutes = require("./routes/admin");
 const messageRoutes = require("./routes/message");
 const { app, server } = require("./socket.js");
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5000;
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -60,12 +65,10 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://quangvhfx22065:bt8DJ4qigJRUzAYl@cluster0.k5j9bbf.mongodb.net/shopdb?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(process.env.MONGO_DB_URI)
   .then((result) => {
-    server.listen(5000, () => {
-      console.log("Server is running on port 5000");
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {

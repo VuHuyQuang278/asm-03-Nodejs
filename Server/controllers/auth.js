@@ -97,7 +97,7 @@ exports.login = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString(),
       },
-      "somesupersecret",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
     res.status(200).json({ token: token, user: loadedUser });
