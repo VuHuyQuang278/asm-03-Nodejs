@@ -53,6 +53,7 @@ const MessageLayout = () => {
             <hr className="mb-4 border border-slate-200" />
             <div>
               {listData &&
+                admin &&
                 listData.map((item) => (
                   <Link
                     to={`/chat/${item.participants.filter((item) => item !== admin._id)}`}

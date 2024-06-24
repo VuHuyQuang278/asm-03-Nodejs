@@ -49,9 +49,10 @@ const LiveChat = () => {
 
       socket?.on("newMessage", (message) => {
         console.log(message);
-        console.log(listMessage);
         setListMessage((msgs) => [...msgs, message]);
       });
+
+      return () => socket?.off("newMessage");
     }
   }, [user]);
 

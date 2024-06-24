@@ -11,6 +11,7 @@ import EditProductPage, {
 } from "./pages/EditProductPage";
 import MessageLayout from "./pages/MessageLayout";
 import MessageDetail from "./pages/MessageDetail";
+import { checkIsRole } from "./utils/role";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -18,16 +19,28 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <AdminPage /> },
-      { path: "order/:orderId", element: <DetailOrder /> },
+      {
+        index: true,
+        element: checkIsRole() ? <AdminPage /> : <MessageLayout />,
+      },
+      {
+        path: "order/:orderId",
+        element: checkIsRole() ? <DetailOrder /> : <MessageLayout />,
+      },
       {
         path: "products",
         children: [
-          { index: true, element: <ProductPage /> },
-          { path: "add-product", element: <AddProductPage /> },
+          {
+            index: true,
+            element: checkIsRole() ? <ProductPage /> : <MessageLayout />,
+          },
+          {
+            path: "add-product",
+            element: checkIsRole() ? <AddProductPage /> : <MessageLayout />,
+          },
           {
             path: "edit-product/:productId",
-            element: <EditProductPage />,
+            element: checkIsRole ? <EditProductPage /> : <MessageLayout />,
             loader: productDetailLoader,
           },
         ],

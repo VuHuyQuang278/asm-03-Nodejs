@@ -14,7 +14,6 @@ const MessageDetail = () => {
   const [listMessage, setListMessage] = useState([]);
 
   const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.auth.user);
   const params = useParams();
   const admin = useGetAdmin();
 
@@ -41,22 +40,23 @@ const MessageDetail = () => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    if (user) {
+  if (admin) {
+    useEffect(() => {
       const socket = openSocket("http://localhost:5000", {
         query: {
-          userId: user._id,
+          userId: admin._id,
         },
         transports: ["websocket"],
       });
 
       socket?.on("newMessage", (message) => {
         console.log(message);
-        console.log(listMessage);
         setListMessage((msgs) => [...msgs, message]);
       });
-    }
-  }, [user]);
+
+      return () => socket?.off("newMessage");
+    }, []);
+  }
 
   const sendMessageHandle = async (event) => {
     event.preventDefault();
@@ -86,7 +86,7 @@ const MessageDetail = () => {
   return (
     <>
       <div className="mx-auto w-11/12 border-2">
-        <div className="h-[32rem]">
+        <div className="h-[32rem] overflow-auto">
           <div className="p-4">
             {listMessage &&
               admin &&
